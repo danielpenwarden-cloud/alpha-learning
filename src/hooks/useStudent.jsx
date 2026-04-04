@@ -216,6 +216,23 @@ export function StudentProvider({ children }) {
     return () => { cancelled = true; };
   }, [activeStudentId, isDemo, user]);
 
+  // Recalculate domainScores.childScore from milestoneStatus
+  useEffect(() => {
+    setDomainScores(prev => {
+      const next = { ...prev };
+      DOMAINS.forEach(domain => {
+        const domainMilestones = MILESTONES.filter(m => m.domainId === domain.id);
+        if (domainMilestones.length === 0) return;
+        const avg = domainMilestones.reduce((sum, m) => {
+          const s = milestoneStatus[m.id];
+          return sum + (s ? s.progress : 0);
+        }, 0) / domainMilestones.length;
+        next[domain.id] = { ...next[domain.id], childScore: Math.round(avg) };
+      });
+      return next;
+    });
+  }, [milestoneStatus]);
+
   // Compute domain stats
   const domainStats = DOMAINS.map(domain => {
     const milestones = MILESTONES.filter(m => m.domainId === domain.id);

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { BENCHMARKS, CHILD_SCORES, CHILD_PROJECTIONS } from '../../data/benchmarks';
+import { BENCHMARKS, CHILD_PROJECTIONS } from '../../data/benchmarks';
 import { useStudent } from '../../hooks/useStudent';
 
 const BAND_OPACITIES = [0.15, 0.25, 0.25, 0.15];
@@ -87,7 +87,7 @@ function computeAutoY(xDom, benchmarkData, countries, childScore, childMonth, pr
   return [lo, hi];
 }
 
-export default function PercentileChart({ domainId, color }) {
+export default function PercentileChart({ domainId, color, childScore = 0 }) {
   const svgRef = useRef();
   const containerRef = useRef();
   const [showNZ, setShowNZ] = useState(false);
@@ -104,7 +104,6 @@ export default function PercentileChart({ domainId, color }) {
   useEffect(() => { yRef.current = yDomain; }, [yDomain]);
 
   const data = BENCHMARKS[domainId];
-  const scores = CHILD_SCORES[domainId];
   const projections = CHILD_PROJECTIONS[domainId];
   const childMonth = Math.min(age.totalMonths, 216);
   const countries = { nz: showNZ, au: showAU, uk: showUK };
@@ -112,8 +111,8 @@ export default function PercentileChart({ domainId, color }) {
   // Auto-fit Y whenever X domain or country toggles change (but not during drag)
   useEffect(() => {
     if (isDragging.current) return;
-    setYDomain(computeAutoY(xDomain, data, countries, scores.childScore, childMonth, projections));
-  }, [xDomain, showNZ, showAU, showUK, data, scores.childScore, childMonth, projections]);
+    setYDomain(computeAutoY(xDomain, data, countries, childScore, childMonth, projections));
+  }, [xDomain, showNZ, showAU, showUK, data, childScore, childMonth, projections]);
 
   // ── Button handlers ──
 
@@ -378,23 +377,23 @@ export default function PercentileChart({ domainId, color }) {
 
     // Child's current position
     const cx = x(childMonth);
-    const cy = y(scores.childScore);
+    const cy = y(childScore);
     if (childMonth >= xDomain[0] && childMonth <= xDomain[1] &&
-        scores.childScore >= yDomain[0] && scores.childScore <= yDomain[1]) {
+        childScore >= yDomain[0] && childScore <= yDomain[1]) {
       chartArea.append('circle')
         .attr('cx', cx).attr('cy', cy).attr('r', 6)
         .attr('fill', color).attr('stroke', '#ffffff').attr('stroke-width', 2);
       chartArea.append('text')
         .attr('x', cx + 10).attr('y', cy + 4)
         .attr('fill', '#1e3a4f').attr('font-size', 11).attr('font-weight', 600)
-        .text(`${scores.childScore}%`);
+        .text(`${childScore}%`);
     }
 
     // Projected trajectory
     const projAges = Object.keys(projections).map(Number).sort((a, b) => a - b);
     const projPts = projAges.filter(m => m > childMonth).map(m => ({ month: m, score: projections[m] }));
     if (projPts.length > 0) {
-      const full = [{ month: childMonth, score: scores.childScore }, ...projPts];
+      const full = [{ month: childMonth, score: childScore }, ...projPts];
       const vis = full.filter(p => p.month >= xDomain[0] && p.month <= xDomain[1]);
       if (vis.length >= 2) {
         const pLine = d3.line().x(d => x(d.month)).y(d => y(d.score)).curve(d3.curveMonotoneX);
@@ -447,7 +446,7 @@ export default function PercentileChart({ domainId, color }) {
     g.selectAll('.domain').attr('stroke', '#d4e0ec');
     g.selectAll('.tick line').attr('stroke', '#d4e0ec');
 
-  }, [data, scores, projections, color, showNZ, showAU, showUK, age.totalMonths, xDomain, yDomain, domainId, childMonth]);
+  }, [data, childScore, projections, color, showNZ, showAU, showUK, age.totalMonths, xDomain, yDomain, domainId, childMonth]);
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-4">

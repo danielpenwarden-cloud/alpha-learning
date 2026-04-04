@@ -57,7 +57,7 @@ export default function DomainPage({ domainId }) {
       {/* Two-column layout on desktop: chart + tree */}
       <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: '14px' }}>
         {/* Percentile Chart */}
-        <PercentileChart domainId={domainId} color={domain.color} />
+        <PercentileChart domainId={domainId} color={domain.color} childScore={completionPct} />
 
         {/* Milestone Tree */}
         <MilestoneTree
