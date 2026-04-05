@@ -28,7 +28,7 @@ export default function StatCard({ domain }) {
         </span>
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-medium" style={{ color: domain.color }}>
-            {domain.childScore}%
+            {domain.avgProgress}%
           </span>
           <span className="text-text-dim text-[10px]">vs age</span>
         </div>

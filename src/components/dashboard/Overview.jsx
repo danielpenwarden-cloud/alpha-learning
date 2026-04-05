@@ -33,7 +33,7 @@ export default function Overview() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6 justify-items-center">
           {domainStats.map(d => (
             <div key={d.id} className="flex flex-col items-center px-4 py-2">
-              <MiniGauge value={d.childScore} color={d.color} label={`vs age`} labelSize="text-sm" />
+              <MiniGauge value={d.avgProgress} color={d.color} label={`vs age`} labelSize="text-sm" />
               <span className="text-text-primary text-sm font-medium mt-3">{d.icon} {d.name.split(' ')[0]}</span>
               <span className="text-text-dim text-sm mt-0.5">
                 vs age 5: {d.comparison5yr.us}% US · {d.comparison5yr.uk}% UK

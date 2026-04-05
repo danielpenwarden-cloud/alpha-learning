@@ -47,7 +47,7 @@ export default function DomainPage({ domainId }) {
 
         {/* Score badges */}
         <div className="flex gap-3 flex-wrap">
-          <Badge label="vs own age" value={`${scores.childScore}%`} color={domain.color} />
+          <Badge label="vs own age" value={`${completionPct}%`} color={domain.color} />
           <Badge label="vs age 5 (US)" value={`${scores.comparison5yr.us}%`} color={domain.color} />
           <Badge label="vs age 5 (NZ)" value={`${scores.comparison5yr.nz}%`} color="#0ea5e9" />
           <Badge label="vs age 5 (UK)" value={`${scores.comparison5yr.uk}%`} color="#8b5cf6" />
