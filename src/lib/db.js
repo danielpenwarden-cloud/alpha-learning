@@ -478,3 +478,51 @@ export async function saveWeeklyRecap(studentId, recap) {
   }
   return data;
 }
+
+// ─── Flashcard Sessions ──────────────────────────
+
+export async function saveFlashcardSession(studentId, userId, session) {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('flashcard_sessions')
+    .insert({
+      student_id: studentId,
+      administered_by: userId || null,
+      deck_id: session.deckId,
+      results: session.results,
+      correct_count: session.correctCount,
+      total_count: session.totalCount,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error saving flashcard session:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function fetchFlashcardSessions(studentId, deckId, limit = 20) {
+  if (!supabase) return [];
+
+  let query = supabase
+    .from('flashcard_sessions')
+    .select('*')
+    .eq('student_id', studentId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (deckId) {
+    query = query.eq('deck_id', deckId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching flashcard sessions:', error);
+    return [];
+  }
+  return data || [];
+}

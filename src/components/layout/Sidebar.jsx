@@ -28,6 +28,7 @@ const NAV_SECTIONS = [
       { path: '/docs', label: 'Documents', icon: '\u{1F4C1}' },
       { path: '/printables', label: 'Printables', icon: '\u{1F5A8}\uFE0F' },
       { path: '/assessment', label: 'Assessment', icon: '\u2705' },
+      { path: '/flashcards', label: 'Flashcards', icon: '\u{1F0CF}' },
     ],
   },
   {

@@ -16,6 +16,7 @@ const MORE_TABS = [
   { path: '/docs', label: 'Documents', icon: '\u{1F4C1}' },
   { path: '/printables', label: 'Printables', icon: '\u{1F5A8}\uFE0F' },
   { path: '/assessment', label: 'Assessment', icon: '\u2705' },
+  { path: '/flashcards', label: 'Flashcards', icon: '\u{1F0CF}' },
   { path: '/insights', label: 'AI Insights', icon: '\u{1F4A1}' },
   { path: '/methodology', label: 'How We Measure', icon: '\u{1F4CA}' },
   { path: '/settings', label: 'Settings', icon: '\u2699\uFE0F' },

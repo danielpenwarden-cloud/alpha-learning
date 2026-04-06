@@ -17,6 +17,7 @@ const WeeklyBlueprint = lazy(() => import('./components/schedule/WeeklyBlueprint
 const UploadedDocs = lazy(() => import('./components/docs/UploadedDocs'));
 const PrintablesTab = lazy(() => import('./components/printables/PrintablesTab'));
 const QuickAssessment = lazy(() => import('./components/assessment/QuickAssessment'));
+const FlashcardsPage = lazy(() => import('./components/flashcards/FlashcardsPage'));
 const HowWeMeasure = lazy(() => import('./components/methodology/HowWeMeasure'));
 const AIInsights = lazy(() => import('./components/insights/AIInsights'));
 const AIChat = lazy(() => import('./components/chat/AIChat'));
@@ -79,6 +80,7 @@ function AppContent() {
                 <Route path="/docs" element={<UploadedDocs />} />
                 <Route path="/printables" element={<PrintablesTab />} />
                 <Route path="/assessment" element={<QuickAssessment />} />
+                <Route path="/flashcards" element={<FlashcardsPage />} />
                 <Route path="/methodology" element={<HowWeMeasure />} />
                 <Route path="/insights" element={<AIInsights />} />
                 <Route path="/chat" element={<AIChat />} />
