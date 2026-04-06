@@ -6,6 +6,18 @@ import { saveFlashcardSession } from '../../lib/db';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const NUMBERS = Array.from({ length: 21 }, (_, i) => i); // 0-20
 
+const DECK_MILESTONE_MAP = {
+  alphabet: 'L03', // Alphabet Knowledge - Uppercase
+  numbers: 'N03',  // Number Recognition 0-10
+};
+
+function progressToStatus(pct) {
+  if (pct >= 95) return 'mastered';
+  if (pct >= 70) return 'proficient';
+  if (pct > 0) return 'in-progress';
+  return 'not-started';
+}
+
 const DECKS = [
   { id: 'alphabet', label: 'Alphabet', icon: '\u{1F524}', description: 'A\u2013Z uppercase letters', items: ALPHABET },
   { id: 'numbers', label: 'Numbers', icon: '\u{1F522}', description: '0\u201320', items: NUMBERS },
@@ -127,7 +139,7 @@ function FlashcardSession({ deck, onFinish }) {
 }
 
 function ResultsSummary({ deck, results, onFinish }) {
-  const { student } = useStudent();
+  const { student, updateMilestone } = useStudent();
   const { user } = useAuth();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -138,15 +150,33 @@ function ResultsSummary({ deck, results, onFinish }) {
   const handleSave = useCallback(async () => {
     if (saved || saving) return;
     setSaving(true);
+
+    const pct = Math.round((correct.length / results.length) * 100);
+
+    // Save flashcard session
     await saveFlashcardSession(student.id, user?.id, {
       deckId: deck.id,
       results: results.map(r => ({ item: String(r.item), known: r.known })),
       correctCount: correct.length,
       totalCount: results.length,
     });
+
+    // Update the linked milestone with the new score
+    const milestoneId = DECK_MILESTONE_MAP[deck.id];
+    if (milestoneId) {
+      const knownList = correct.map(r => String(r.item)).join(', ');
+      const unknownList = incorrect.map(r => String(r.item)).join(', ');
+      const note = `Flashcard ${deck.label}: ${correct.length}/${results.length} (${pct}%). Known: ${knownList}${unknownList ? '. Needs practice: ' + unknownList : ''}`;
+      updateMilestone(milestoneId, {
+        progress: pct,
+        status: progressToStatus(pct),
+        evidenceNotes: note,
+      });
+    }
+
     setSaving(false);
     setSaved(true);
-  }, [saved, saving, student.id, user, deck.id, results, correct.length]);
+  }, [saved, saving, student.id, user, deck.id, results, correct.length, incorrect, updateMilestone]);
 
   // Auto-save on mount
   useState(() => { handleSave(); });
